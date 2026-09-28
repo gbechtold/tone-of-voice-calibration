@@ -135,6 +135,44 @@ SLOP = [
     (r"(^|\n)\s*(Grundsätzlich|Generell|Im Prinzip|Zunächst einmal|Vorab)\b", "Räuspern vorweg"),
     (r"\b(spielt eine (wichtige|zentrale) Rolle|ist entscheidend für den Erfolg|zeigt sich deutlich)\b", "Pseudo-Erkenntnis"),
 ]
+# --- Auf ausdrueckliche Anordnung aktiviert (28.09.2026), obwohl die Messung sie
+# --- nicht stuetzte. Die Muster sind so gefasst, dass sie den Slop treffen und
+# --- nicht die Sachaussage. Jede Fassung ist unten begruendet.
+
+# Emoji: raus aus Fliesstext und Ueberschriften. AUSNAHME sind die Marker 🔴/🟢,
+# die AGENTS.md §6 fuer das Vorher/Nachher-Format vorschreibt, und alles, was
+# ausdruecklich angefordert wurde.
+EMOJI = "[\U0001F300-\U0001FAFF\U00002600-\U000027BF\U0001F000-\U0001F2FF]"
+EMOJI_ERLAUBT = u"\U0001F534\U0001F7E2"   # rot/gruen fuer Vorher/Nachher
+
+# Verstaerker und Weichmacher in SACHAUSSAGEN. Bewusst ohne "sehr gerne",
+# "absolut lässig", "super": das sind Hoeflichkeits- und Zustimmungsformeln und
+# damit die Stimme des Autors (10 Belege in seinen eigenen Mails).
+FUELL_ADVERB = [
+    (r"\b(deutlich|erheblich|signifikant|maßgeblich|wesentlich)\s+\w+(er|ere|eren)\b", "Verstärker vor Komparativ"),
+    (r"\b(grundsätzlich|letztendlich|letzten Endes|zweifellos|bekanntlich|naturgemäß)\b", "Füll-Adverb"),
+    (r"\b(durchaus|ziemlich|recht|relativ|einigermaßen|vergleichsweise)\s+\w+", "Weichmacher-Adverb"),
+    (r"\b(selbstverständlich|natürlich|klarerweise)\s+(ist|sind|wird|werden|kann|können)\b", "Selbstverständlich-Floskel"),
+]
+
+# Rhetorische Dreierfigur: drei ADJEKTIVE oder Abstrakta zur Verstaerkung
+# ("klar, schnell und verlaesslich"). Eine Sachaufzaehlung konkreter Dinge
+# ("Muenchen, Stuttgart und Zuerich") ist KEINE Dreierfigur - die wird bei S4/S5
+# ohnehin zur Bullet-Liste. Deshalb greift das Muster nur vor Satzende und nur
+# bei klein geschriebenen Woertern, also nicht bei Eigennamen.
+DREIERFIGUR = r"\b([a-zäöüß]{4,}), ([a-zäöüß]{4,}) und ([a-zäöüß]{4,})\s*[.!?]"
+
+# Nominalstil: zwei Handlungssubstantive, die ein Verb ersetzen. Fachbegriff-
+# Paare wie "Testumgebung auf die Live-Umgebung" sind ausgenommen, deshalb
+# verlangt das Muster eine Praeposition der Verschachtelung dazwischen.
+NOMINALSTIL = r"\b\w{4,}(ung|heit|keit|schaft)\s+(der|des|von|zur|zum|bei der)\s+\w{4,}(ung|heit|keit|schaft)\b"
+
+# W-Satzanfang als RHETORISCHE FRAGE. Nur Fragezeichen-Varianten: eine
+# Doppelpunkt-Marke wie "Was noch offen ist:" ist eine Abschnittsmarke der
+# S-Achse, keine rhetorische Frage. Guntram hat genau diese Marke am 28.09.2026
+# selbst gesetzt; ein Filter, der sie trifft, wuerde S gegen sich selbst wenden.
+W_SATZANFANG = r"(^|\n)\s*#{0,4}\s*\**(Warum|Wieso|Weshalb)\b[^\n]{0,70}\?"
+
 # Bewusst NICHT aufgenommen, weil an echten Texten geprueft und widerlegt:
 #   Nominalstil-Ketten   Guntram 1,2 / Claude 1,3 je 1000 Woerter. Gleichauf.
 #   Dreierfiguren        Guntram 2,4 / Claude 1,3 bis 2,1. Guntram nutzt sie MEHR.
@@ -246,6 +284,12 @@ def measure(raw, name="-"):
     lead = _count(LEAD_MARKER, body)
     filler = _count(FILLER, body)
     em_dash = len(re.findall(EM_DASH, body))
+    emoji = [c for c in re.findall(EMOJI, body) if c not in EMOJI_ERLAUBT]
+    adverbs = [(l, len(re.findall(pt, body))) for pt, l in FUELL_ADVERB]
+    adverbs = [(l, n) for l, n in adverbs if n]
+    dreier = len(re.findall(DREIERFIGUR, body))
+    nominal = len(re.findall(NOMINALSTIL, body))
+    w_anfang = len(re.findall(W_SATZANFANG, body))
     slop_hits = [(label, len(re.findall(pat, body))) for pat, label in SLOP]
     slop_hits = [(l, n) for l, n in slop_hits if n]
     slop = sum(n for _, n in slop_hits)
@@ -280,6 +324,9 @@ def measure(raw, name="-"):
         "questions": questions, "handbacks": handback,
         "em_dashes": em_dash, "em_dash_per_1000": round(1000.0 * em_dash / words, 1) if words else 0.0,
         "slop_markers": slop, "slop_detail": slop_hits,
+        "emoji": len(emoji), "emoji_chars": "".join(sorted(set(emoji))),
+        "fill_adverbs": sum(n for _, n in adverbs), "adverb_detail": adverbs,
+        "rhetorical_triads": dreier, "nominal_style": nominal, "w_openings": w_anfang,
         "data_lines": len([l for l in core.split("\n")
                            if l.strip() and not re.search(r"[.!?]\s*$", l.strip())
                            and (re.search(DATA_LINE, l) or len(re.findall(r"\S+", l)) <= 4)]),
@@ -307,6 +354,14 @@ def render(m):
         "%s (%d)" % (l, n) for l, n in m["slop_detail"])
     print("  Slop      %d Em-Dash (%.1f je 1000 W, Ziel 0) | %d Modell-Tells%s"
           % (m["em_dashes"], m["em_dash_per_1000"], m["slop_markers"], slop_note))
+    extra = [("Emoji", m["emoji"]), ("Füll-Adverb", m["fill_adverbs"]),
+             ("Dreierfigur", m["rhetorical_triads"]), ("Nominalstil", m["nominal_style"]),
+             ("W-Satzanfang", m["w_openings"])]
+    hit = [(k, v) for k, v in extra if v]
+    print("  Zusatz    %s" % (", ".join("%s %d" % (k, v) for k, v in hit) if hit
+                              else "alle fünf Zusatzfilter sauber (Ziel 0)"))
+    if m["emoji_chars"]:
+        print("            Emoji im Text: %s" % m["emoji_chars"])
 
 def main():
     ap = argparse.ArgumentParser(description="Messe eine Mail gegen die sieben Ton-Achsen.")

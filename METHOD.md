@@ -258,6 +258,25 @@ automatisch zählen: Dieselbe Sache heißt im Absatz nacheinander Lösung, Tool,
 Plattform. Der Deutschunterricht verbietet Wortwiederholung, Sprachmodelle setzen das brav
 um. Ein Ding, ein Name.
 
+### Wenn der Autor gegen die Messung entscheidet
+
+Die Messung sagt, was jemand heute schreibt. Sie sagt nicht, was er künftig will. Wird ein
+Filter gegen das Messergebnis angeordnet, ist das zulässig und wird dokumentiert, nicht
+wegdiskutiert. Zwei Dinge halten den Schaden klein:
+
+1. **Das Muster eng fassen, nicht den Begriff.** „Keine Adverbien" ist unbrauchbar, weil
+   es die Stimme trifft. „Keine Verstärker vor Komparativ, keine Weichmacher, keine
+   Füll-Adverbien in Sachaussagen" ist umsetzbar und lässt Höflichkeitsformeln stehen.
+   Dasselbe bei Dreierfiguren: die rhetorische Figur am Satzende ist Slop, eine
+   Sachaufzählung dreier konkreter Dinge nicht.
+2. **Nach dem Fassen erneut gegen die echten Texte prüfen.** Ein angeordneter Filter, der
+   die Hälfte der eigenen Mails markiert, wird ignoriert werden. Bei einer Anordnung vom
+   28.09.2026 fiel die Trefferzahl in den Autortexten durch enge Fassung von zwölf auf
+   eins, während ein Testtext mit allen Mustern weiterhin vollständig anschlägt.
+
+Was dabei nicht passieren darf: den Filter still abschwächen und das Ergebnis als
+Umsetzung ausgeben. Die Fassung gehört offengelegt, damit der Autor sie weiten kann.
+
 ### Drei Regeln gegen Überkorrektur
 
 1. **Gattungsnorm schlägt Einzelregel.** Erst die Textsorte bestimmen, dann redigieren. In
