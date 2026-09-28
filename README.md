@@ -53,6 +53,10 @@ python3 tools/rebuild_measurements.py
 
 # Öffentliches Repo gegen private Daten prüfen (braucht das private Submodul)
 python3 tools/check_public.py
+
+# Hook: Draft-Kopie anlegen, damit die gesendete Fassung später vergleichbar ist
+echo '{"tool_input":{"subject":"T","htmlBody":"Hallo,<br><br>Gr&uuml;&szlig;e"}}' \
+  | python3 tools/draft_snapshot.py --verbose
 ```
 
 Nur Python 3 aus der Standardbibliothek, keine Abhängigkeiten.

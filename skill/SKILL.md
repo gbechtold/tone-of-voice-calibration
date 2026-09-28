@@ -130,8 +130,19 @@ Findet Korrekturen, die Guntram gemacht hat, ohne sie zu melden. Das ist die eig
 Datenquelle im Alltag.
 
 **Voraussetzung:** Gmail löscht den Draft beim Senden. Deshalb legt der PostToolUse-Hook
-`tools/draft_snapshot.sh` bei jedem `create_draft` eine Kopie unter
+`tools/draft_snapshot.py` bei jedem `create_draft` eine Kopie unter
 `PROJEKT/data/_snapshots/` ab. Ohne diese Kopie ist kein Abgleich möglich.
+
+Der Hook ist bewusst fehlertolerant: Er lässt einen Tool-Call **niemals** scheitern und
+schweigt bei Problemen. Der Preis ist, dass ein Defekt unbemerkt bleibt. Wenn
+`_snapshots/` nach mehreren Drafts leer ist, prüf ihn von Hand:
+
+```
+echo '{"tool_input":{"subject":"T","htmlBody":"Hallo,<br><br>Gr&uuml;&szlig;e"}}' \
+  | python3 PROJEKT/calibration/tools/draft_snapshot.py --verbose
+```
+
+`--verbose` macht genau die Fehler sichtbar, die im Hook-Betrieb verschwinden.
 
 Ablauf:
 
