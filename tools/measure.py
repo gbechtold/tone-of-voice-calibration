@@ -95,6 +95,31 @@ FILLER = [
     r"Bei Fragen stehe ich",
     r"nicht zögern",
 ]
+# Sprachmodell-Tells ("Slop"). Bewusst NICHT als achte Achse: Slop hat keine
+# sinnvolle Zwischenstufe, jedes Profil müsste auf 5 stehen. Also harte Liste
+# plus Messwert.
+#
+# EM_DASH steht separat, weil es der einzige Marker ist, der im Vergleich
+# messbar auseinanderfällt: Claude-Dokumente 10–24 je 1000 Wörter, Guntrams
+# gesendete Mails 0 auf 585 Wörter (gemessen 28.09.2026).
+#
+# Nicht auf die Liste gekommen, weil Guntram sie selbst benutzt: Dreierfiguren
+# ("A, B und C"), Nominalstil-Ballungen, gelegentliche Wertadjektive. Eine
+# Slop-Liste, die den eigenen Stil des Autors verbietet, ist Rauschen.
+EM_DASH = r"—"
+SLOP = [
+    (r"nicht nur\b[^.!?]{0,60}\bsondern auch", "nicht nur/sondern auch"),
+    (r"[Ee]s geht (dabei )?nicht (nur )?um\b[^.!?]{0,50}\bsondern", "es geht nicht um X, sondern"),
+    (r"[Ii]n (der heutigen|Zeiten von|einer Welt, in der)", "in der heutigen Welt"),
+    (r"\b(nahtlos|ganzheitlich|maßgeschneidert|zukunftsweisend|leistungsstark|passgenau|innovativ)\w*\b", "Werbe-Adjektiv"),
+    (r"([Ll]assen Sie uns|[Tt]auchen wir|[Ww]erfen wir einen Blick)", "Lassen Sie uns / tauchen wir ein"),
+    (r"([Kk]urz gesagt|[Zz]usammenfassend|[Ii]m Grunde|[Aa]bschließend lässt sich)", "Meta-Zusammenfassung"),
+    (r"[Ee]s (ist|sei) (wichtig|anzumerken|erwähnenswert|hervorzuheben)", "es ist wichtig zu beachten"),
+    (r"\b(wertvolle|spannende|tiefe) Einblicke\b", "wertvolle Einblicke"),
+    (r"\b(Mehrwert|Synergi\w+|Ökosystem|Landschaft der)\b", "Buzzword"),
+    (r"\b(das Beste daran|der größte Vorteil dabei)\b", "Doppelpunkt-Dramatik"),
+    (r"\bReise\b(?![^.!?]{0,20}(nach|mit dem|Zug|Auto))", "Reise-Metapher"),
+]
 SUBSTANCE = [
     r"\d{1,2}\.\d{1,2}\.",            # Datum
     r"\d+[.,]?\d*\s?(€|Euro|Prozent|%)",
@@ -198,6 +223,10 @@ def measure(raw, name="-"):
     handback = _count(HANDBACK, body)
     lead = _count(LEAD_MARKER, body)
     filler = _count(FILLER, body)
+    em_dash = len(re.findall(EM_DASH, body))
+    slop_hits = [(label, len(re.findall(pat, body))) for pat, label in SLOP]
+    slop_hits = [(l, n) for l, n in slop_hits if n]
+    slop = sum(n for _, n in slop_hits)
     substance = _count(SUBSTANCE, body)
     questions = body.count("?")
 
@@ -227,6 +256,8 @@ def measure(raw, name="-"):
         "conditionals": cond, "bring_requests": bring, "option_offers": options,
         "lead_markers": lead, "fillers": filler, "substance_markers": substance,
         "questions": questions, "handbacks": handback,
+        "em_dashes": em_dash, "em_dash_per_1000": round(1000.0 * em_dash / words, 1) if words else 0.0,
+        "slop_markers": slop, "slop_detail": slop_hits,
         "data_lines": len([l for l in core.split("\n")
                            if l.strip() and not re.search(r"[.!?]\s*$", l.strip())
                            and (re.search(DATA_LINE, l) or len(re.findall(r"\S+", l)) <= 4)]),
@@ -250,6 +281,10 @@ def render(m):
           % (m["lead_markers"], m["questions"]))
     print("  Substanz  %d Marker (Zahlen, Daten, Kontakte, Links) | %d Bedauern"
           % (m["substance_markers"], m["regret"]))
+    slop_note = "" if not m["slop_detail"] else "  → " + ", ".join(
+        "%s (%d)" % (l, n) for l, n in m["slop_detail"])
+    print("  Slop      %d Em-Dash (%.1f je 1000 W, Ziel 0) | %d Modell-Tells%s"
+          % (m["em_dashes"], m["em_dash_per_1000"], m["slop_markers"], slop_note))
 
 def main():
     ap = argparse.ArgumentParser(description="Messe eine Mail gegen die sieben Ton-Achsen.")

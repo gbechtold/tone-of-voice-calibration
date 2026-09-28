@@ -1,6 +1,6 @@
 # Tone of Voice Calibration
 
-Ein Sprachmodell an den eigenen Schreibstil kalibrieren — nicht mit Adjektiven, sondern
+Ein Sprachmodell an den eigenen Schreibstil kalibrieren - nicht mit Adjektiven, sondern
 mit Zählregeln.
 
 ## Das Problem
@@ -17,7 +17,7 @@ Gemessen an 26 selbst getippten gegen 35 generierte Sätze derselben Person:
 | Sätze ab 20 Wörtern | 4 % | 23 % |
 | Sätze ohne Komma | **65 %** | 14 % |
 
-Fast doppelte Satzlänge, dreifache Kommadichte. Das ist der Unterschied, den Leser spüren —
+Fast doppelte Satzlänge, dreifache Kommadichte. Das ist der Unterschied, den Leser spüren -
 nicht das Vokabular.
 
 ## Die Lösung
@@ -46,7 +46,7 @@ Korrektur, die bewegte Achse wird nachgezogen. Nach drei bis vier Paaren stehen 
 python3 tools/measure.py mail.txt
 
 # Draft gegen gesendete Fassung vergleichen
-python3 tools/compare.py before.txt after.txt --label "Empfänger — Thema"
+python3 tools/compare.py before.txt after.txt --label "Empfaenger, Thema"
 
 # Messreihe aus allen Paaren neu erzeugen
 python3 tools/rebuild_measurements.py
@@ -85,13 +85,13 @@ weil eine Liste zu schützender Namen im öffentlichen Repo sich selbst widerleg
 
 Drei Befunde, die ohne Messung nicht sichtbar geworden wären:
 
-**Kompakter heißt nicht kürzer.** Eine korrigierte Mail verlor vier Wörter — und gewann
+**Kompakter heißt nicht kürzer.** Eine korrigierte Mail verlor vier Wörter - und gewann
 eine Telefonnummer, während sieben Wörter Konditionalgerüst fielen. Der Median fiel von 14
 auf 9. Gleiche Länge, mehr Substanz. Vage Angaben werden präzisiert, nicht gestrichen:
 „drei bis vier" ist keine Angabe, sondern eine vermiedene Entscheidung.
 
 **Sprachmodelle laden Arbeit beim Empfänger ab.** Ein Modell kennt das Beziehungsnetz des
-Absenders nicht. Es sieht eine Informationslücke und löst sie als Bitte — die einzige
+Absenders nicht. Es sieht eine Informationslücke und löst sie als Bitte - die einzige
 Auflösung, die ihm zur Verfügung steht. „Nennen Sie mir eine Ansprechperson" statt „die
 frage ich selbst". Dieses Muster trat in einer Woche dreimal auf und ist die teuerste
 Achse: Eine überflüssige Bitte kostet einen Mailwechsel.
@@ -99,12 +99,12 @@ Achse: Eine überflüssige Bitte kostet einen Mailwechsel.
 **Höflichkeit ist nicht Pessimismus.** Bei einer Verzögerungsmail blieben „leider muss ich
 dir mitteilen" und „Es tut mir leid" unverändert stehen. Was fiel, war die
 Selbstrechtfertigung: 33 Wörter darüber, warum es dazu kam. Das war eine Korrektur an der
-Methode, nicht am Text — und der Grund, warum die O-Achse heute Bedauern und
+Methode, nicht am Text - und der Grund, warum die O-Achse heute Bedauern und
 vorweggenommenes Scheitern trennt.
 
 Zwei der sieben Achsen (S und F) fehlten in der ersten Fassung vollständig und waren dann
 der größte gemessene Effekt. Wenn die Deltas nach mehreren Paaren groß bleiben, fehlt eine
-Achse — dann lohnt die Suche danach mehr, als bestehende Werte hin und her zu schieben.
+Achse - dann lohnt die Suche danach mehr, als bestehende Werte hin und her zu schieben.
 
 ## Lizenz
 
