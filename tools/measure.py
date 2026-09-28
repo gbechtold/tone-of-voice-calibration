@@ -41,6 +41,21 @@ NEGATIVE_PREMISE = [
     r"\bwäre aber weniger\b",
     r"\bist unglücklich\b",
 ]
+# Belehrende Negation (axis O, zweiter Bestandteil): Saetze, die den Vorschlag
+# oder die Annahme des Empfaengers als unzureichend markieren. Gemessen an einem
+# echten Paar vom 28.09.2026: "Eine Checkliste allein beantwortet das nicht. Sie
+# zeigt Maengel. Was die Maengel kosten, zeigt sie nicht." - vom Autor als "zu
+# beschulend" zurueckgewiesen. Die sieben Achsen zeigten dabei KEINE Bewegung,
+# die Negationszahl fiel von 3 auf 0. Deshalb dieser Marker.
+BELEHREND = [
+    (r"\b(beantwortet|zeigt|loest|liefert|erfasst|genuegt|reicht|hilft)\b[^.!?]{0,40}\bnicht\b", "Negation eines Vorschlags"),
+    (r"\b(reicht|genügt)\s+(dafür\s+)?nicht\b", "reicht nicht"),
+    (r"\b(allein|alleine)\b[^.!?]{0,30}\bnicht\b", "allein nicht"),
+    (r"\bnicht\s+(aus|ausreichend|genug)\b", "nicht ausreichend"),
+    (r"\bWas\b[^.!?]{0,40},\s*(zeigt|sagt|verrät)\s+\w+\s+nicht\b", "was X nicht zeigt"),
+    (r"\bist kein\w*\s+\w+", "ist kein X"),
+]
+
 # echtes Bedauern — zählt NICHT gegen O (siehe METHOD.md, Achse O)
 REGRET = [
     r"\bleider muss ich\b", r"\bEs tut mir leid\b", r"\bbedauere\b",
@@ -283,6 +298,9 @@ def measure(raw, name="-"):
     no_comma = sum(1 for s in sents if "," not in s)
 
     neg = _count(NEGATIVE_PREMISE, body)
+    lecture = [(l, len(re.findall(pt, core))) for pt, l in BELEHREND]
+    lecture = [(l, n) for l, n in lecture if n]
+    lecture_n = sum(n for _, n in lecture)
     regret = _count(REGRET, body)
     justify = _count(SELF_JUSTIFY, body)
     cond = len(re.findall(CONDITIONAL, body))
@@ -311,7 +329,8 @@ def measure(raw, name="-"):
     med = lengths[len(lengths) // 2]
     axes = {
         "W": sal if sal else (clo if clo else 3),
-        "O": _level(per100(neg), [(0.0, 5), (1.2, 4), (2.5, 3), (99, 1)]),
+        # O zaehlt beides: vorweggenommenes Scheitern UND belehrende Negation.
+        "O": _level(per100(neg + lecture_n), [(0.0, 5), (1.2, 4), (2.5, 3), (99, 1)]),
         "L": _level(bring, [(0, 5), (1, 4), (2, 3), (99, 1)]),
         "K": _level(med, [(6, 5), (9, 4), (12, 3), (15, 2), (99, 1)]),
         "E": _level(per100(cond), [(1.2, 1), (2.2, 2), (3.2, 3), (99, 5)]),
@@ -327,6 +346,7 @@ def measure(raw, name="-"):
         "pct_without_comma": int(round(100.0 * no_comma / len(sents))),
         "bullets": bullets, "colon_intros": colon_intro, "prose_enumerations": prose_enum,
         "negative_premises": neg, "regret": regret, "self_justification": justify,
+        "lecturing": lecture_n, "lecturing_detail": lecture,
         "conditionals": cond, "bring_requests": bring, "option_offers": options,
         "lead_markers": lead, "fillers": filler, "substance_markers": substance,
         "questions": questions, "handbacks": handback,
@@ -352,6 +372,9 @@ def render(m):
           % (m["commas_per_sentence"], m["pct_without_comma"], m["bullets"], m["colon_intros"]))
     print("  Ballast   %d Negativ-Prämissen | %d Konditionale | %d Floskeln | %d Selbstrechtfertigung"
           % (m["negative_premises"], m["conditionals"], m["fillers"], m["self_justification"]))
+    if m["lecturing"]:
+        print("  Belehrend %d %s" % (m["lecturing"],
+              ", ".join("%s (%d)" % (l, n) for l, n in m["lecturing_detail"])))
     print("  Last      %d Bring-Bitten | %d Options-Angebote | %d zurückgegebene Entscheidungen"
           % (m["bring_requests"], m["option_offers"], m["handbacks"]))
     print("  Führung   %d Führungs-Marker | %d Fragen gesamt (Sachfragen zählen nicht gegen F)"
