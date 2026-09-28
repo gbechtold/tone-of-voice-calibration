@@ -274,7 +274,12 @@ def measure(raw, name="-"):
     bullets = len(re.findall(r"^\s*([-–•*]|\d+[.)])\s+", body, re.M))
     colon_intro = len(re.findall(r":\s*$", body, re.M))
     prose_enum = len(re.findall(r",\s+(und|sowie)\s+(natürlich\s+)?(das|die|der)\b", body))
-    commas = body.count(",")
+    # Kommas nur aus den gezaehlten Saetzen, nicht aus dem ganzen body: Anrede
+    # ("Lieber Herr X,") und Terminzeilen ("Mittwoch, 30. September, 10:00 Uhr")
+    # tragen je ein bis zwei Kommas, zaehlen aber nicht als Satz. In einer Mail mit
+    # drei Terminvorschlaegen stammten 7 von 9 Kommas daraus, die Kennzahl war
+    # dadurch fast dreifach zu hoch.
+    commas = sum(x.count(",") for x in sents)
     no_comma = sum(1 for s in sents if "," not in s)
 
     neg = _count(NEGATIVE_PREMISE, body)

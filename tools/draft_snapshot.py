@@ -30,6 +30,32 @@ def dig(d, *keys):
             return None
     return d
 
+def find_any(node, names, depth=0):
+    """Search the whole payload for the first of `names` that carries a value.
+
+    The hook payload does not always nest the tool result under the key we expect:
+    the first live draft on 28.09.2026 produced draft_id=None although the API had
+    returned an id. Searching recursively makes the hook independent of the exact
+    envelope shape.
+    """
+    if depth > 6 or node is None:
+        return None
+    if isinstance(node, dict):
+        for n in names:
+            v = node.get(n)
+            if isinstance(v, (str, int)) and str(v).strip():
+                return str(v)
+        for v in node.values():
+            found = find_any(v, names, depth + 1)
+            if found:
+                return found
+    elif isinstance(node, list):
+        for v in node:
+            found = find_any(v, names, depth + 1)
+            if found:
+                return found
+    return None
+
 def html_to_text(raw_html):
     # Parameter NICHT "html" nennen: das würde das Modul html verdecken und
     # html.unescape() unten mit AttributeError sprengen — den der Hook still
@@ -84,8 +110,9 @@ def main():
         "subject": inp.get("subject"),
         "was_html": bool(inp.get("htmlBody")),
         "body_text": html_to_text(body) if inp.get("htmlBody") else body.strip(),
-        "draft_id": res.get("id") or res.get("draftId"),
-        "thread_id": res.get("threadId") or inp.get("threadId"),
+        "draft_id": res.get("id") or res.get("draftId") or find_any(data, ["draftId", "id"]),
+        "thread_id": (res.get("threadId") or inp.get("threadId")
+                      or find_any(data, ["threadId", "messageId"])),
         "matched": False,
     }
     if not snap["subject"] and not snap["body_text"]:
