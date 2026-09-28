@@ -115,6 +115,17 @@ def main():
                       or find_any(data, ["threadId", "messageId"])),
         "matched": False,
     }
+    # Diagnose: Wenn die IDs fehlen, halten wir die STRUKTUR der Payload fest,
+    # nicht ihren Inhalt. Zwei echte Drafts am 28.09.2026 kamen ohne draft_id an,
+    # obwohl die API sie zurueckgab. Vermutung: Die Payload traegt nur tool_input.
+    # Nur Schluesselnamen, keine Werte - die Payload enthaelt Kundendaten.
+    if not snap["draft_id"] and not snap["thread_id"]:
+        def shape(node, depth=0):
+            if depth > 2 or not isinstance(node, dict):
+                return type(node).__name__
+            return {k: shape(v, depth + 1) for k, v in sorted(node.items())}
+        snap["_payload_shape"] = shape(data)
+
     if not snap["subject"] and not snap["body_text"]:
         if verbose:
             print("leerer Draft — nichts gespeichert", file=sys.stderr)
