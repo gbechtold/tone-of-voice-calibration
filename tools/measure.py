@@ -106,7 +106,11 @@ FILLER = [
 # Nicht auf die Liste gekommen, weil Guntram sie selbst benutzt: Dreierfiguren
 # ("A, B und C"), Nominalstil-Ballungen, gelegentliche Wertadjektive. Eine
 # Slop-Liste, die den eigenen Stil des Autors verbietet, ist Rauschen.
-EM_DASH = r"—"
+# NUR der Geviertstrich U+2014 (englische Typografie). Der Halbgeviertstrich
+# U+2013 wird NICHT gezaehlt: als Bis-Strich ("15-45 Woerter") ist er korrektes
+# Deutsch. Der Einwand von kein-ki-sprech gegen ein Em-Dash-Verbot zielt auf
+# U+2013, nicht auf U+2014.
+EM_DASH = "\u2014"
 SLOP = [
     (r"nicht nur\b[^.!?]{0,60}\bsondern auch", "nicht nur/sondern auch"),
     (r"[Ee]s geht (dabei )?nicht (nur )?um\b[^.!?]{0,50}\bsondern", "es geht nicht um X, sondern"),
@@ -119,7 +123,25 @@ SLOP = [
     (r"\b(Mehrwert|Synergi\w+|Ökosystem|Landschaft der)\b", "Buzzword"),
     (r"\b(das Beste daran|der größte Vorteil dabei)\b", "Doppelpunkt-Dramatik"),
     (r"\bReise\b(?![^.!?]{0,20}(nach|mit dem|Zug|Auto))", "Reise-Metapher"),
+    # --- aus m-dohmen/kein-ki-sprech, fuer deutsche Texte ---
+    # Gemessen 28.09.2026: Passiv ohne Akteur 4,9 je 1000 Woerter in Claude-Doku,
+    # 0,0 bei Guntram. Der einzige neue Marker mit echtem Befund.
+    (r"\b(wurde|wurden|wird|werden)\s+\w+(t|en)\b(?![^.!?]{0,40}\b(von|durch)\b)", "Passiv ohne Akteur"),
+    # Die folgenden traten in keinem gemessenen Text auf. Vorbeugung.
+    (r"\b(am Ende des Tages|[Ll]ow.Hanging|nicht wirklich|Deep Dive|Alignment|Learnings|Pain Points?|Roll.?out)\b", "Beraterdenglisch"),
+    (r"\b(Darüber hinaus|Des Weiteren|Ferner|Nicht zuletzt)\b", "Konnektoren-Kette"),
+    (r"\b(adressieren|abbilden|aufsetzen|ausrollen|abholen|verproben)\b", "Fassaden-Verb"),
+    (r"\b(Im Folgenden|Werfen wir|Betrachten wir|Sehen wir uns)\b", "Reiseleiter-Satz"),
+    (r"(^|\n)\s*(Grundsätzlich|Generell|Im Prinzip|Zunächst einmal|Vorab)\b", "Räuspern vorweg"),
+    (r"\b(spielt eine (wichtige|zentrale) Rolle|ist entscheidend für den Erfolg|zeigt sich deutlich)\b", "Pseudo-Erkenntnis"),
 ]
+# Bewusst NICHT aufgenommen, weil an echten Texten geprueft und widerlegt:
+#   Nominalstil-Ketten   Guntram 1,2 / Claude 1,3 je 1000 Woerter. Gleichauf.
+#   Dreierfiguren        Guntram 2,4 / Claude 1,3 bis 2,1. Guntram nutzt sie MEHR.
+#   Wertadjektive        Guntram 1,2 / Claude 0,4. Sein Ton.
+#   Halbgeviertstrich    korrektes Deutsch als Bis-Strich.
+#   Adverb- und W-Satz-Verbote, Emoji-Verbot: englischspezifisch bzw. Guntrams
+#   AGENTS.md nutzt Emoji in Ueberschriften bewusst.
 SUBSTANCE = [
     r"\d{1,2}\.\d{1,2}\.",            # Datum
     r"\d+[.,]?\d*\s?(€|Euro|Prozent|%)",

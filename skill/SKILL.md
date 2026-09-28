@@ -112,6 +112,11 @@ Vor dem Anlegen eines Gmail-Drafts oder auf Zuruf.
    nicht mit dem Hinweis, dass sie darunter liegt.
 4. Die Checkliste in `tone-of-voice-email.md` §12 durchgehen.
 
+**Anti-Slop läuft immer mit**, egal welches Profil eingestellt ist und egal was im
+Auftrag steht. `measure.py` meldet Geviertstriche und Modell-Tells in der Slop-Zeile.
+Der Filter darf dabei keinen Profilwert verschieben: Slop raus, Ton bleibt. Findet er
+nichts, wird nichts geändert und das auch so gesagt.
+
 Zwei Dinge, die das Werkzeug **nicht** sieht und die du selbst prüfen musst:
 
 - **Kennt Guntram hier jemanden?** Jede Rollenbezeichnung ohne Namen („eine Ansprechperson
@@ -121,6 +126,10 @@ Zwei Dinge, die das Werkzeug **nicht** sieht und die du selbst prüfen musst:
   verschwindet. Dieses Muster trat in der Erstkalibrierung dreimal in einer Woche auf.
 - **Ist die Länge vom Sachverhalt gedeckt?** Ein langer Detailteil ist erlaubt, solange die
   Antwort im ersten Absatz steht.
+- **Synonymkarussell?** Heißt dieselbe Sache im Text nacheinander Lösung, Tool, Anwendung
+  und Plattform? Ein Ding, ein Name. Das kann kein Regex zählen.
+- **Welche Textsorte ist das?** Gattungsnorm schlägt Einzelregel: In einem Angebot oder
+  Protokoll sind feste Formeln und Fachvokabular Teil der Gattung, nicht Slop.
 
 ---
 

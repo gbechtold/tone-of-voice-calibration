@@ -210,8 +210,15 @@ Empfänger so wenig Arbeit wie möglich hat.
 
 ## Anti-Slop: was keine Achse ist
 
-Modell-typische Wendungen bekommen bewusst **keinen** Regler. Slop hat keine sinnvolle
-Zwischenstufe, jedes Profil müsste auf 5 stehen. Also: harte Streichliste plus Messwert.
+Modell-typische Wendungen bekommen bewusst **keinen** Regler.
+
+**Der Filter ist immer an.** Er hängt an keinem Profil, gilt für jede Stufe und jede
+Textsorte, auch für das Risiko-Profil. Es gibt keine Einstellung, die ihn abschaltet.
+
+**Er verschiebt keine Reglerstufe.** Slop wird innerhalb der Profilwerte entfernt, nie
+gegen sie. Ein Text wird beim Entslopen nicht wärmer, knapper oder strukturierter, als
+sein Profil vorgibt. Umgekehrt ist der Filter nie ein Argument, ein Profil zu ändern.
+Dass ein aufgelöster Einschub rechnerisch den Median senkt, ist eine Folge, kein Ziel.
 
 ### Kandidaten gehören erst gegen die echten Texte geprüft
 
@@ -219,35 +226,66 @@ Der wichtigste Schritt, und der, den fertige Slop-Listen überspringen. Gemessen
 oft ein Marker in Modelltexten gegenüber den Texten des Autors vorkommt. Nur was
 auseinanderfällt, kommt auf die Liste.
 
-Ein Durchlauf über 841 Wörter Autortext gegen 3142 Wörter Modelltext ergab:
+Ein Durchlauf über 841 Wörter Autortext gegen 3142 Wörter Modelltext ergab zwei Treffer
+und sechs Fehlalarme:
 
 | Marker | Autor je 1000 W | Modell je 1000 W | Urteil |
 |---|---|---|---|
-| Em-Dash | **0,0** | 10 bis 24 | auf die Liste |
-| Dreierfigur (A, B und C) | 2,4 | 1,3 bis 2,1 | **kein Slop**, eigener Stil |
-| Nominalstil-Ballung | 1,2 | 1,3 bis 2,1 | **kein Slop** |
-| Wertadjektive | 1,2 | 0,4 | **kein Slop** |
-| „nicht nur, sondern auch" | 0 | 0 | vorbeugend |
-| „In der heutigen Welt" | 0 | 0 | vorbeugend |
+| Geviertstrich `—` (U+2014) | **0,0** | 10 bis 24 | auf die Liste |
+| Passiv ohne Akteur | **0,0** | 4,9 (Doku) | auf die Liste |
+| Nominalstil-Ketten | 1,2 | 1,3 bis 1,5 | **kein Slop**, gleichauf |
+| Dreierfigur (A, B und C) | 2,4 | 1,3 bis 2,1 | **kein Slop**, Autor nutzt sie mehr |
+| Wertadjektive | 1,2 | 0,4 | **kein Slop**, eigener Ton |
+| Halbgeviertstrich `–` | 0 | 0 | **kein Slop**, korrekter Bis-Strich |
+| Emoji in Überschriften | kommt vor | | **kein Slop**, bewusst gesetzt |
 
-Eine Liste, die den eigenen Stil des Autors verbietet, ist Rauschen. Drei der geprüften
-Marker fielen genau deshalb wieder heraus.
+Eine Liste, die den eigenen Stil des Autors verbietet, ist Rauschen.
 
-### Der eine belastbare Befund
+### Sprachgrenzen beachten
 
-Der Em-Dash ist der einzige Marker, der messbar auseinanderfällt, und der einzige mit
-einem belegten Korrekturfall: In einer echten Mail ersetzte der Autor `— ` durch ` - `.
+Die verbreiteten Slop-Listen sind für das Englische geschrieben. Wer sie ungeprüft auf
+eine andere Sprache überträgt, baut Fehlalarme ein:
 
-Der Strich ist nur das Symptom. Die Untugend dahinter ist der **Einschub statt des
-Satzes**: Ein Gedanke wird nicht zu Ende gebracht, sondern angehängt. Wer den Strich durch
-einen Punkt ersetzt, behebt beides und verbessert nebenbei K.
+- **Das pauschale Em-Dash-Verbot** trifft im Deutschen den Halbgeviertstrich `–`, der als
+  Bis-Strich korrekt ist. Der Geviertstrich `—` dagegen ist englische Typografie und im
+  Deutschen ohnehin unüblich. Die Regel muss das Zeichen benennen, nicht „Em-Dash".
+- **Adverb- und W-Satzanfang-Verbote** haben im Deutschen keine Entsprechung.
+- **Wortlisten wie „delve" oder „leverage"** übersetzen sich nicht. Deutsch braucht eigene
+  Marker: Nominalstil, Passiv ohne Akteur, Synonymkarussell, Beraterdenglisch.
+
+**Synonymkarussell** ist der interessanteste sprachspezifische Marker und lässt sich nicht
+automatisch zählen: Dieselbe Sache heißt im Absatz nacheinander Lösung, Tool, Anwendung,
+Plattform. Der Deutschunterricht verbietet Wortwiederholung, Sprachmodelle setzen das brav
+um. Ein Ding, ein Name.
+
+### Drei Regeln gegen Überkorrektur
+
+1. **Gattungsnorm schlägt Einzelregel.** Erst die Textsorte bestimmen, dann redigieren. In
+   Angeboten, Protokollen und Aufsichtsschreiben sind Siezen, feste Formeln und
+   Fachvokabular Teil der Gattung, nicht Slop.
+2. **Ein unveränderter Text ist ein gültiges Ergebnis.** Findet der Filter nichts, wird
+   nichts geändert und das auch so gesagt.
+3. **Unantastbar:** Code, URLs, Zitate, Tabellenstruktur, Fachbegriffe der Zielgruppe und
+   die Stimme der schreibenden Person. Fehlt eine Zahl, bleibt die Stelle stehen und wird
+   als offene Angabe gemeldet. Nie erfinden.
 
 ### Ehrlichkeit über die Reichweite
 
-Die übrigen elf Marker in `measure.py` sind **Vorbeugung, kein Befund**. Sie traten in
-keinem gemessenen Text auf. Ein Bigramm-Vergleich auf unbekannte Muster fand nichts, weil
-bei dieser Textmenge keine Wendung dreimal vorkommt. Wer die Liste für erschöpfend hält,
-täuscht sich über die Stichprobe.
+Belegt sind zwei Marker. Die übrigen in `measure.py` sind **Vorbeugung, kein Befund**: Sie
+traten in keinem gemessenen Text auf. Ein Bigramm-Vergleich auf unbekannte Muster fand
+nichts, weil bei dieser Textmenge keine Wendung dreimal vorkommt. Wer die Liste für
+erschöpfend hält, täuscht sich über die Stichprobe.
+
+### Verwandte Arbeiten
+
+- `m-dohmen/kein-ki-sprech`: für das Deutsche neu geschrieben statt übersetzt. Quelle für
+  Passiv ohne Akteur, Synonymkarussell, Beraterdenglisch, die Gattungsnorm-Regel und den
+  Einwand gegen ein pauschales Em-Dash-Verbot.
+- `yetone/kill-ai-slop`, `nutlope/hallmark`: behandeln **visuelles** Slop in
+  Web-Oberflächen, nicht Prosa. Übertragbar ist das Prinzip: fester Katalog, Vorher/Nachher
+  je Tell, Prüfung vor der Ausgabe.
+- GitHub-Topics `ai-slop-detection`, `ai-slop-fixer`: überwiegend Code-Qualität oder
+  englische Prosa.
 
 ## Profile
 
