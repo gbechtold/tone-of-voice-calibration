@@ -1,0 +1,17 @@
+Hallo,
+
+leider muss ich dir mitteilen, dass sich der Livegang der Aktionsseite verschiebt. Ich hatte dir den 29.09. genannt, und dieser Termin ist nicht zu halten.
+
+Was passiert ist
+
+Beim Übertragen der Seite von der Testumgebung auf die Live-Umgebung ist ein Problem aufgetreten. Der Hoster hat den Synchronisierungsvorgang abgebrochen, weil die Datenbank größer ist als das Limit, das im Tarif vorgesehen ist. Ich habe das erst gemerkt, als der Vorgang bereits lief, und leider war zu diesem Zeitpunkt nicht mehr absehbar, wie lange die Klärung mit dem Support dauern würde. Ich habe daraufhin ein Ticket eröffnet und warte auf Antwort. Nach meiner Erfahrung mit diesem Hoster kann das zwischen einem und drei Werktagen dauern, wobei ich das nicht garantieren kann, da es von der Auslastung des Supports abhängt.
+
+Was das bedeutet
+
+Der neue realistische Termin ist voraussichtlich der 02.10., sofern der Support zeitnah reagiert. Sollte es länger dauern, würde sich der Start entsprechend nach hinten verschieben, worüber ich dich dann natürlich sofort informieren würde.
+
+Das ist unglücklich, weil die Influencerin ihr Reel eigentlich diese Woche veröffentlichen wollte. Falls du möchtest, kann ich sie bitten, die Veröffentlichung zu verschieben, oder wir lassen sie veröffentlichen und nehmen in Kauf, dass die Seite in den ersten Tagen noch nicht erreichbar ist. Was wäre dir lieber?
+
+Es tut mir leid, dass ich dir keine besseren Nachrichten bringen kann.
+
+Liebe Grüße

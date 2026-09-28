@@ -1,0 +1,21 @@
+Hallo,
+
+leider muss ich dir mitteilen, dass sich der Livegang der Aktionsseite verschiebt.
+
+Ich hatte den 29.09. geplant - aber wir können diesen Termin nicht halten.
+
+Zum Hintergrund: Beim Übertragen der Seite von der Testumgebung auf die Live-Umgebung ist ein Problem aufgetreten. Der Hosting-Anbieter (Beispiel GmbH) hat den Synchronisierungsvorgang abgebrochen, weil die Datenbank größer ist als das Limit, das im Tarif vorgesehen ist.
+
+Wir klären nun mit dem Support wie wir das lösen können und wie lange es dauert.
+
+Ich habe daraufhin am 28.09 10:00 ein Ticket eröffnet. Nach meiner Erfahrung mit diesem Hoster kann das zwischen einem und drei Werktagen dauern.
+
+Was das bedeutet. Der neue realistische Termin für die Rückmeldung ist der 03.10. und dann machen wir den Import, sofern der Support zeitnah reagiert.
+
+Sollte es länger dauern, müssen wir den Start entsprechend nach hinten verschieben, worüber ich dich dann natürlich sofort informieren würde.
+
+Ich werde auch das Timing mit der Influencerin abstimmen, da sie ihr Reel diese Woche veröffentlichen wollte.
+
+Es tut mir leid, dass ich dir keine besseren Nachrichten bringen kann.
+
+Liebe Grüße
