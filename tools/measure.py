@@ -160,7 +160,9 @@ FUELL_ADVERB = [
 # ("Muenchen, Stuttgart und Zuerich") ist KEINE Dreierfigur - die wird bei S4/S5
 # ohnehin zur Bullet-Liste. Deshalb greift das Muster nur vor Satzende und nur
 # bei klein geschriebenen Woertern, also nicht bei Eigennamen.
-DREIERFIGUR = r"\b([a-zäöüß]{4,}), ([a-zäöüß]{4,}) und ([a-zäöüß]{4,})\s*[.!?]"
+# \s+ statt Leerzeichen: in einer umbrochenen Mail steht der Zeilenwechsel
+# mitten in der Figur ("schnell,\nsicher und zuverlaessig").
+DREIERFIGUR = r"\b([a-zäöüß]{4,}),\s+([a-zäöüß]{4,})\s+und\s+([a-zäöüß]{4,})\s*[.!?]"
 
 # Nominalstil: zwei Handlungssubstantive, die ein Verb ersetzen. Fachbegriff-
 # Paare wie "Testumgebung auf die Live-Umgebung" sind ausgenommen, deshalb
@@ -171,7 +173,8 @@ NOMINALSTIL = r"\b\w{4,}(ung|heit|keit|schaft)\s+(der|des|von|zur|zum|bei der)\s
 # Doppelpunkt-Marke wie "Was noch offen ist:" ist eine Abschnittsmarke der
 # S-Achse, keine rhetorische Frage. Guntram hat genau diese Marke am 28.09.2026
 # selbst gesetzt; ein Filter, der sie trifft, wuerde S gegen sich selbst wenden.
-W_SATZANFANG = r"(^|\n)\s*#{0,4}\s*\**(Warum|Wieso|Weshalb)\b[^\n]{0,70}\?"
+# Auch mitten im Absatz: eine rhetorische Frage steht selten am Zeilenanfang.
+W_SATZANFANG = r"(^|\n|[.!?]\s+)#{0,4}\s*\**(Warum|Wieso|Weshalb)\b[^\n]{0,70}\?"
 
 # Bewusst NICHT aufgenommen, weil an echten Texten geprueft und widerlegt:
 #   Nominalstil-Ketten   Guntram 1,2 / Claude 1,3 je 1000 Woerter. Gleichauf.
